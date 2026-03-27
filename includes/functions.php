@@ -6,14 +6,22 @@ function my_contact_form() {
     $message = '';
 
     if (isset($_GET['success'])) {
-    $message = "<p style='color:green;'>Message sent successfully ✅</p>";
+    $message = "<p style='color:green;'>Message sent successfully ✅</p>
+    
+    <script>
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.pathname);
+            }
+        </script>
+    
+    ";
 }
 
     return $message . '
     <form method="post">
         <input type="text" name="name" placeholder="Your Name" required><br><br>
         <input type="email" name="email" placeholder="Your Email" required><br><br>
-        <input type="phone" style="width:100%; padding:8px; border: 1px solid #cec9c9;}" name="phone" placeholder="Your Phone Number" required><br><br>
+        <input type="tel" style="width:100%; padding:8px; border: 1px solid #cec9c9;}" name="phone" placeholder="Your Phone Number" required><br><br>
         <textarea name="message" placeholder="Your Message" required></textarea><br><br>
         <button type="submit" style="background-color: #05599d; color: white; border-radius: 10px; padding: 14px 29px; cursor: pointer;" name="submit_form">Submit</button>
     </form>
