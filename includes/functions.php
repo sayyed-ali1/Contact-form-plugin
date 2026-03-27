@@ -133,7 +133,7 @@ function my_form_entries_page() {
     $results = $wpdb->get_results("SELECT * FROM $table_name");
 
     echo "<div class='wrap'>";
-    echo "<h1 class='fs-1'>Form Entries 📋</h1>";
+    echo "<h1 style='text-align:start; font-size: 40px; font-weight: bold;'>Form Entries 📋</h1>";
 
     if (!$results) {
         echo "<p>No entries found</p>";
