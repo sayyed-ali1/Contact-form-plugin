@@ -13,7 +13,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
+
 // Include files
 require_once plugin_dir_path(__FILE__) . 'includes/functions.php';
 
-register_activation_hook(__FILE__, 'create_form_table');
+register_activation_hook(__FILE__, 'create_form_table') 
+;

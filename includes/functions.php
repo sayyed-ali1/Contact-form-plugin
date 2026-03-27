@@ -19,6 +19,7 @@ function my_contact_form() {
     ';
 }
 
+
 add_shortcode('myform', 'my_contact_form');
 
 function handle_form_submission() {
