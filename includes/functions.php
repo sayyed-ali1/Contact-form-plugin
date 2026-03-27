@@ -99,7 +99,7 @@ function my_plugn_page() {
 
 function my_form_entries_menu() {
     add_submenu_page(
-        'contact-form-plugin', // 👈 SAME slug
+        'contact-form-plugin', 
         'Form Entries',
         'Form Entries',
         'manage_options',
