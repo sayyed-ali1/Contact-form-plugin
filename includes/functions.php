@@ -3,27 +3,16 @@
 
 function my_contact_form() {
 
-    $message = '';
-
-    if (isset($_GET['success'])) {
-    $message = "<p style='color:green;'>Message sent successfully ✅</p>
     
-    <script>
-            if (window.history.replaceState) {
-                window.history.replaceState(null, null, window.location.pathname);
-            }
-        </script>
-    
-    ";
-}
-
-    return $message . '
-    <form method="post">
+    return  '
+    <form id="myForm">
         <input type="text" name="name" placeholder="Your Name" required><br><br>
         <input type="email" name="email" placeholder="Your Email" required><br><br>
         <input type="tel" style="width:100%; padding:8px; border: 1px solid #cec9c9;}" name="phone" placeholder="Your Phone Number" required><br><br>
         <textarea name="message" placeholder="Your Message" required></textarea><br><br>
         <button type="submit" style="background-color: #05599d; color: white; border-radius: 10px; padding: 14px 29px; cursor: pointer;" name="submit_form">Submit</button>
+
+           <div class="result" style="margin-top: 20px;"></div>
     </form>
     ';
 }
@@ -31,39 +20,8 @@ function my_contact_form() {
 
 add_shortcode('myform', 'my_contact_form');
 
-function handle_form_submission() {
 
-    if (isset($_POST['submit_form'])) {
 
-        global $wpdb;
-
-        $table_name = $wpdb->prefix . 'my_form_data';
-
-        $name = sanitize_text_field($_POST['name']);
-        $email = sanitize_email($_POST['email']);
-        $phone = sanitize_text_field($_POST['phone']);
-        $message = sanitize_textarea_field($_POST['message']);
-
-        $wpdb->insert($table_name, array(
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
-            'message' => $message
-        ));
-
-        wp_mail(
-            get_option('admin_email'),
-            'New Contact Form Message',
-            "Name: $name\nEmail: $email\nPhone: $phone\nMessage: $message"
-        );
-
-        // ✅ REDIRECT
-        wp_redirect(add_query_arg('success', '1', get_permalink()));
-        exit;
-    }
-}
-
-add_action('init', 'handle_form_submission');
 
 function create_form_table() {
 
@@ -167,3 +125,56 @@ function my_form_entries_page() {
 
     echo "</div>";
 }
+
+
+
+
+function handle_ajax_form() {
+
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'my_form_data';
+
+    $name = sanitize_text_field($_POST['name']);
+    $email = sanitize_email($_POST['email']);
+    $phone = sanitize_text_field($_POST['phone']);
+    $message = sanitize_textarea_field($_POST['message']);
+
+    $wpdb->insert($table_name, array(
+        'name' => $name,
+        'email' => $email,
+        'phone' => $phone,
+        'message' => $message
+    ));
+
+    // ✅ EMAIL SEND
+    wp_mail(
+        get_option('admin_email'),
+        'New Contact Form Message',
+        "Name: $name\nEmail: $email\nPhone: $phone\nMessage: $message"
+    );
+
+    echo "Message sent successfully ✅";
+
+    wp_die();
+}
+
+add_action('wp_ajax_save_form_data', 'handle_ajax_form');
+add_action('wp_ajax_nopriv_save_form_data', 'handle_ajax_form');
+
+
+function my_plugin_scripts() {
+
+    wp_enqueue_script(
+        'my-ajax-script',
+        plugin_dir_url(__FILE__) . '../assets/script.js',
+        array('jquery'),
+        false,
+        true
+    );
+
+    wp_localize_script('my-ajax-script', 'ajax_object', array(
+        'ajax_url' => admin_url('admin-ajax.php')
+    ));
+}
+add_action('wp_enqueue_scripts', 'my_plugin_scripts');
