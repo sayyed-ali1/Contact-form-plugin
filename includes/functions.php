@@ -10,8 +10,10 @@ function my_contact_form() {
         <input type="email" name="email" placeholder="Your Email" required><br><br>
         <input type="tel" style="width:100%; padding:8px; border: 1px solid #cec9c9;}" name="phone" placeholder="Your Phone Number" required><br><br>
         <textarea name="message" placeholder="Your Message" required></textarea><br><br>
-        <button type="submit" style="background-color: #05599d; color: white; border-radius: 10px; padding: 14px 29px; cursor: pointer;" name="submit_form">Submit</button>
+        <button id="submitBtn" type="submit" style="background-color: #05599d; color: white; border-radius: 10px; padding: 14px 29px;  cursor: pointer;" name="submit_form">Submit</button>
 
+
+        
            <div class="result" style="margin-top: 20px;"></div>
     </form>
     ';
@@ -140,6 +142,18 @@ function handle_ajax_form() {
     $phone = sanitize_text_field($_POST['phone']);
     $message = sanitize_textarea_field($_POST['message']);
 
+    // ❌ VALIDATION
+    if (empty($name) || empty($email) || empty($phone) || empty($message)) {
+        echo "All fields are required ❌";
+        wp_die();
+    }
+
+    if (!is_email($email)) {
+        echo "Invalid email ❌";
+        wp_die();
+    }
+
+    // ✅ SAVE
     $wpdb->insert($table_name, array(
         'name' => $name,
         'email' => $email,
@@ -147,7 +161,7 @@ function handle_ajax_form() {
         'message' => $message
     ));
 
-    // ✅ EMAIL SEND
+    // EMAIL
     wp_mail(
         get_option('admin_email'),
         'New Contact Form Message',
@@ -155,7 +169,6 @@ function handle_ajax_form() {
     );
 
     echo "Message sent successfully ✅";
-
     wp_die();
 }
 
