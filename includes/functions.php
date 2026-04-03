@@ -152,14 +152,15 @@ function handle_ajax_form() {
         echo "Invalid email ❌";
         wp_die();
     }
-
+$user_id = get_current_user_id();
     // ✅ SAVE
     $wpdb->insert($table_name, array(
-        'name' => $name,
-        'email' => $email,
-        'phone' => $phone,
-        'message' => $message
-    ));
+    'user_id' => $user_id, // 🔥 IMPORTANT
+    'name' => $name,
+    'email' => $email,
+    'phone' => $phone,
+    'message' => $message
+));
 
     // EMAIL
     wp_mail(
